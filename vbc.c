@@ -113,6 +113,8 @@ node *primary(char **s)
     else if(expect(s, '('))
     {
         ret = parse_expr(s, 1);
+        if(!ret)
+            return NULL;
         if(!expect(s, ')'))
             return (destroy_tree(ret), NULL);
     }
@@ -143,11 +145,15 @@ node    *parse_expr(char **s, int flag)
 
     ret = mul(s);
     if(!ret)
-        return (NULL);
+        return ( NULL);
     while(1)
     {
         if(**s && accept(s, '+'))
+        {
             ret = new_node(ADD, ret, mul(s));
+            if(!ret)
+                return NULL;
+        }
         else
             break;
     }
@@ -161,6 +167,8 @@ int main(int argc, char **argv)
 {
     if (argc != 2)
         return (1);
+    if (!*argv[1])
+        return (printf("0\n"), 0);
     node *tree = parse_expr(&argv[1], 0);
     if (!tree)
         return (1);
